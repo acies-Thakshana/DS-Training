@@ -1,0 +1,81 @@
+GENERAL:
+
+-- Average price for every room type
+SELECT 
+    room_type_reserved,
+    avg(avg_price_per_room) AS avg_price_per_room_per_type
+FROM booking
+GROUP BY room_type_reserved
+order by room_type_reserved;
+
+-- No of people in every segment
+select market_segment_type, round(avg(no_of_adults),2) as adults,round(avg(no_of_children),2) as children,round(avg(no_of_people),2) as people,count(Booking_ID) as Total_Bookings
+from booking
+group by market_segment_type;
+
+
+NOT CANCELLED:
+
+use hotelreservation;
+
+select * from booking
+limit 5;
+
+with not_canceled as(
+	select * from booking
+    where booking_status="Not_Canceled"
+)
+-- Lead Time Analysis
+select market_segment_type,round(max(lead_time),2) as max_lead,round(min(lead_time),2) as min_lead,round(avg(lead_time),2) as avg_lead,count(Booking_ID) as Total_Booking
+from not_canceled
+group by market_segment_type;
+
+-- Total sales every month
+select arrival_year,arrival_month,round(sum(avg_price_per_room),2) as Total_sales,count(Booking_ID) as Total_Booking
+from not_canceled
+group by arrival_year,arrival_month
+order by arrival_year,arrival_month;
+
+-- Most prefered room type
+select room_type_reserved,count(Booking_ID) as Total_bookings
+from not_canceled
+group by room_type_reserved;
+
+-- Total Bookings in every segment
+select market_segment_type,count(Booking_ID) as total_bookings
+from not_canceled
+group by market_segment_type;
+
+select * from not_canceled;
+
+
+CANCELLED:
+
+select * from booking;
+
+with canceled as(
+	select * from booking
+    where booking_status="Canceled"
+)
+-- Lead Time Analysis
+select market_segment_type,round(max(lead_time),2) as max_lead,round(min(lead_time),2) as min_lead,round(avg(lead_time),2) as avg_lead,count(Booking_ID) as Total_Booking
+from canceled
+group by market_segment_type;
+
+-- Total cancellation sales every month
+select arrival_year,arrival_month,round(sum(avg_price_per_room),2) as Total_sales,count(Booking_ID) as Total_Booking
+from canceled
+group by arrival_year,arrival_month
+order by arrival_year,arrival_month;
+
+-- Most canceled room type
+select room_type_reserved,count(Booking_ID) as Total_bookings
+from canceled
+group by room_type_reserved;
+
+-- Total Bookings in every segment
+select market_segment_type,count(Booking_ID) as total_bookings
+from canceled
+group by market_segment_type;
+
+select * from canceled;
